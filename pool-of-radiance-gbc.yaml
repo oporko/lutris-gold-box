@@ -1,0 +1,148 @@
+name: Pool of Radiance with Gold Box Companion
+game_slug: pool-of-radiance-with-gbc
+version: 1.0
+slug: pool-of-radiance-with-gbc-installer
+runner: wine
+
+script:
+  files:
+  - pool: 'N/A: Select zip file containing Pool of Radiance'
+  - dosbox:
+      url: https://sourceforge.net/projects/dosbox/files/dosbox/0.74-3/DOSBox0.74-3-win32-installer.exe/download
+      filename: DOSBox0.74-3-win32-installer.exe
+  - gbc: https://gbc.zorbus.net/gbc.zip
+  - unarj: https://fossies.org/linux/unarj/unarj32.exe
+  game:
+    exe: drive_c/GAMES/START.BAT
+    working_dir: drive_c/GAMES # hack to get .bat running
+    prefix: $GAMEDIR
+  installer:
+  - task:
+      arch: win64
+      name: create_prefix
+      prefix: $GAMEDIR
+  - extract:
+      dst: $GAMEDIR/drive_c/GAMES/DOS/POOLRAD
+      file: pool
+  - task:
+      name: wineexec
+      executable: unarj
+      args: e DISK1.ARJ
+      working_dir: $GAMEDIR/drive_c/GAMES/DOS/POOLRAD
+  - execute:
+      command: rm $GAMEDIR/drive_c/GAMES/DOS/POOLRAD/INSTALL.EXE
+  - execute:
+      command: rm $GAMEDIR/drive_c/GAMES/DOS/POOLRAD/DISK1.ARJ
+  - write_file:
+      file: $GAMEDIR/drive_c/GAMES/DOS/POOLRAD/POOL.CFG
+      content: "E\r\nP\r\nC:\\POOLRAD\\\r\nC:\\POOLRAD\\\r\nF\r\n"
+  - extract:
+      dst: $GAMEDIR/drive_c/GAMES/GBC
+      file: gbc
+  - task:
+      name: wineexec
+      executable: dosbox
+      args: /S /D=C:\\GAMES\\DOSBOX
+  - write_file:
+      file: $GAMEDIR/drive_c/GAMES/DOSBOX/DOSBOX.CONF
+      content: |
+        [sdl]
+        fullscreen=false
+        fulldouble=false
+        fullresolution=original
+        windowresolution=original
+        output=surface
+        autolock=true
+        sensitivity=100
+        waitonerror=true
+        priority=higher,normal
+        mapperfile=mapper-0.74-3.map
+        usescancodes=true
+
+        [dosbox]
+        language=
+        machine=svga_s3
+        captures=capture
+        memsize=16
+
+        [render]
+        frameskip=0
+        aspect=false
+        scaler=normal2x
+
+        [cpu]
+        core=auto
+        cputype=auto
+        cycles=auto
+        cycleup=10
+        cycledown=20
+
+        [mixer]
+        nosound=false
+        rate=44100
+        blocksize=1024
+        prebuffer=25
+
+        [midi]
+        mpu401=intelligent
+        mididevice=default
+        midiconfig=
+
+        [sblaster]
+        sbtype=sb16
+        sbbase=220
+        irq=7
+        dma=1
+        hdma=5
+        sbmixer=true
+        oplmode=auto
+        oplemu=default
+        oplrate=44100
+
+        [gus]
+        gus=false
+        gusrate=44100
+        gusbase=240
+        gusirq=5
+        gusdma=3
+        ultradir=C:\ULTRASND
+
+        [speaker]
+        pcspeaker=true
+        pcrate=44100
+        tandy=auto
+        tandyrate=44100
+        disney=true
+
+        [joystick]
+        joysticktype=auto
+        timed=true
+        autofire=false
+        swap34=false
+        buttonwrap=false
+
+        [serial]
+        serial1=dummy
+        serial2=dummy
+        serial3=disabled
+        serial4=disabled
+
+        [dos]
+        xms=true
+        ems=true
+        umb=true
+        keyboardlayout=auto
+
+        [ipx]
+        ipx=false
+
+        [autoexec]
+        MOUNT C C:\GAMES\DOS
+        C:
+        CD POOLRAD
+        START.EXE
+  - write_file:
+      file: $GAMEDIR/drive_c/GAMES/START.BAT
+      content: |
+        start C:\GAMES\DOSBOX\DOSBOX.EXE -conf C:\GAMES\DOSBOX\DOSBOX.CONF
+        start C:\GAMES\GBC\GBC.EXE
