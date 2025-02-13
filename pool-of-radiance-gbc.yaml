@@ -30,9 +30,11 @@ script:
       args: e DISK1.ARJ
       working_dir: $GAMEDIR/drive_c/GAMES/DOS/POOLRAD
   - execute:
-      command: rm $GAMEDIR/drive_c/GAMES/DOS/POOLRAD/INSTALL.EXE
+      command: find -maxdepth 1 -iname INSTALL.EXE -delete
+      working_dir: $GAMEDIR/drive_c/GAMES/DOS/POOLRAD
   - execute:
-      command: rm $GAMEDIR/drive_c/GAMES/DOS/POOLRAD/DISK1.ARJ
+      command: find -maxdepth 1 -iname DISK1.ARJ -delete
+      working_dir: $GAMEDIR/drive_c/GAMES/DOS/POOLRAD
   - write_file:
       file: $GAMEDIR/drive_c/GAMES/DOS/POOLRAD/POOL.CFG
       content: "E\r\nP\r\nC:\\POOLRAD\\\r\nC:\\POOLRAD\\\r\nF\r\n"
