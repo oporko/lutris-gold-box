@@ -1,8 +1,9 @@
 name: Pool of Radiance with Gold Box Companion
-game_slug: pool-of-radiance-with-gbc
-version: 1.0
-slug: pool-of-radiance-with-gbc-installer
+game_slug: pool-of-radiance
+version: DOS
+slug: pool-of-radiance-with-gbc
 runner: wine
+description: Play Pool of Radiance with Gold Box Companion on Linux!
 notes: |
   This installer requires the original Pool of Radiance install disk archive, DISK1.ARJ.
 
@@ -11,6 +12,8 @@ notes: |
   Gold Box Companion requires Pool of Radiance version 1.3. You will need to set the install directory when first running Gold Box Companion, it is C:\GAMES\DOS\POOLRAD. See the Gold Box Companion documentation for more details.
 
   This installer creates a bash script for disabling the copy protection from Pool of Radiance version 1.3, it requires xxd to function. Run remove-copy-protection.sh in the install directory. With the copy protection patched you can press enter at the copy protection screen to pass the check.
+
+  The DOSBox config is located at [install directory]/drive_c/GAMES/DOSBOX/DOSBOX.CONF.
 
 script:
   files:
@@ -22,8 +25,11 @@ script:
   - unarj: https://fossies.org/linux/unarj/unarj32.exe
   game:
     exe: drive_c/GAMES/START.BAT
-    working_dir: drive_c/GAMES # hack to get .bat running
+    working_dir: $GAMEDIR # hack to get .bat running
     prefix: $GAMEDIR
+    launch_configs:
+    - exe: drive_c/GAMES/GBC/SGE.exe
+      name: Save Game Editor
   installer:
   - task:
       arch: win64
