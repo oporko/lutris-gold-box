@@ -1,0 +1,1 @@
+Lutris install scripts for AD&D Gold Box games
